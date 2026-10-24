@@ -46,10 +46,14 @@ git lfs pull
 | `docs` | 构建、试玩、发布范围及验证说明 |
 | [PROJECT.md](PROJECT.md) | 当前进度与接手信息 |
 
+## 素材与继续开发
+
+完整公共素材、原图、模型、Unity 导出包、生成记录、着色器制作工程及地图设计已单独打包到 [v3.0.47 Releases](https://github.com/yan450863-ui/grey-harbor/releases/tag/v3.0.47)。下载 `GreyHarbor-3.0.47-Assets-and-Handover.zip`，解压后按 [素材与开发接手指南](docs/handover.md) 使用；包内附文件清单、逐文件 SHA-256 与原图去重索引。
+
 源码文件中的旧版本编号是模块名称，不代表可以删除。部分历史验证依赖旧工程或旧版本号，应按 [验证说明](docs/verification/README.md) 使用。
 
 ## 开源范围
 
 项目代码及随仓库提供的项目自有资源采用 [MIT License](LICENSE)。Unity 编辑器、运行时及其依赖组件遵循各自的许可。本项目是独立游戏原型，与《逃离塔科夫》及其开发商无隶属关系。
 
-本仓库发布当前维护工程。历史版本、原始参考图、素材候选、个人存档、机器日志及缓存保留在作者本地；Windows 成品包通过 Releases 单独提供。详细范围见 [发布整理说明](docs/publication.md)。
+本仓库发布当前维护工程；完整公共素材与制作档案、Windows 成品包通过 Releases 单独提供。历史游戏版本、个人存档、机器日志及缓存保留在作者本地。详细范围见 [发布整理说明](docs/publication.md)。

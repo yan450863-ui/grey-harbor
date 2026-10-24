@@ -25,4 +25,6 @@
 
 获取方式见 [README](README.md)，构建方法见 [docs/build.md](docs/build.md)。本仓库于 2026-10-24 整理发布，游戏内容版本与修改日期沿用原项目，不因文档整理而递增。
 
+公共素材、制作源及当前版制作档案通过同版本 Releases 的素材包提供，使用方式见[素材与开发接手指南](docs/handover.md)。
+
 专项验证的适用范围见 [docs/verification/README.md](docs/verification/README.md)。
