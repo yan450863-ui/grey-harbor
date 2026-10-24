@@ -1,0 +1,6 @@
+灰港行动2.7.17：8种搜索容器外观资源。
+包含原生Prefab、Mesh、Material及必要Shader/有效碰撞脚本依赖；类型、用途和尺寸元数据保存在CSV。
+预制件仅为外观与分件碰撞，不含Loot、搜索内容或可独立使用的搜索组件；ContainerProp、隐藏交互包络、112类kit元数据组件及临时资源owner已移除。
+实际搜索注册请在完整游戏工程使用 RaidMap.BuildFutureSearchContainer2717(kind,model,yaw,rng)，它创建唯一精细外观并注册现有Common规则。不要把本外观再与AddContainer外壳叠加。
+相对Stand/Access和实际外观尺寸见FutureSearchContainers2717.csv；它们由原运行时生成函数取得，未凭手工近似填写。
+展厅使用隔离训练，真实物品不带回营地；这些外观不表示正式双子楼已投放。

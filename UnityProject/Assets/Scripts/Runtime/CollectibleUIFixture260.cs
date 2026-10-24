@@ -1,0 +1,1 @@
+namespace GreyHarbor {public sealed partial class RaidUI {internal void MarketFixture260(int main,int sub){marketMain=marketExpanded=main;marketSub=sub;marketMode=0;marketWasOpen=true;marketScroll=UnityEngine.Mathf.FloorToInt(MarketCategories.Goods(main,sub).FindIndex(k=>CollectibleData260.IsNew(k))/4f)*206;marketConfirm=saleConfirm=selling=false;ClearItemUI();}}}

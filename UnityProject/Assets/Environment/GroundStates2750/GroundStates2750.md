@@ -1,0 +1,3 @@
+# Ground states 2.7.50
+
+9 original library prefabs retain their original procedural geometry, palette, surface region metadata and materials. 13 new usable PNG + material + mesh + prefab samples use the exact production GroundMaterialStates2750.Sample/Transition functions. Each sample is 4 x 4 metres, 384 x 384 pixels. Soil/gravel/cement/asphalt/steel are distinct purpose families; wet soil, repair aggregate, asphalt repair, oil wear and 3 natural transition states extend the original library. Outdoor roads/details >= .40 paint priority are kept intact; indoor floors and special ship deck pixels are unchanged.

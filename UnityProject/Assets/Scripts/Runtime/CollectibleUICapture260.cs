@@ -1,0 +1,5 @@
+using UnityEngine;using System.Collections;using System.IO;
+namespace GreyHarbor {public sealed partial class RaidVerification {
+ IEnumerator Screen260(string name){yield return new WaitForSeconds(.3f);yield return new WaitForEndOfFrame();var frame=ScreenCapture.CaptureScreenshotAsTexture();File.WriteAllBytes(Path.Combine(folder,name),frame.EncodeToPNG());Destroy(frame);yield return null;}
+ IEnumerator CaptureCollectibleUI260(){FreshCamp();G.HarborWalkthrough=true;G.BeginTraining();G.Chest.Slots.Clear();G.Bag.Slots.Clear();foreach(var k in new[]{ItemKind.CompressedBiscuits,ItemKind.FoldingUmbrella,ItemKind.VintageDeskLamp,ItemKind.BrassTelescope,ItemKind.HydraulicJack})G.Bag.Add(k,1,ItemOrigin.Certified,true);G.OpenLoot=null;G.Panel=CampPanel.None;G.InventoryOpen=true;G.Paused=false;yield return Screen260("260-multi-cell-backpack-ui.png");G.Paused=true;G.Finish(false);MarketFixture();G.Save.Coins=200000;G.NoticeTime=0;G.GetComponent<RaidUI>().MarketFixture260(6,1);G.Paused=false;yield return Screen260("260-new-tools-market-ui.png");G.Paused=true;}
+}}

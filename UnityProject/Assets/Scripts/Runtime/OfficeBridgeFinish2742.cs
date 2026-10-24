@@ -1,0 +1,15 @@
+using UnityEngine;
+namespace GreyHarbor {public sealed partial class RaidMap {
+ public WorldDoor OfficeBridgeRoomDoor2742;
+ public GameObject OfficeBridgeDressing2742;
+ void BuildOfficeBridgeDressing2742(GameObject floor){
+  OfficeBridgeDressing2742=new GameObject("OfficeBridgeFinishedDetails2742");OfficeBridgeDressing2742.transform.SetParent(Root,false);var art=new WorkshopWastelandArt(this);
+  foreach(float sign in new[]{-1f,1f}){art.Panel("BridgeLowerPaint2742","6E897D",new Vector3(0,.59f,sign*1.392f),Vector3.right,Vector3.up,10.5f,1.18f);art.Panel("BridgeUpperPaint2742","C1C0A5",new Vector3(0,2.19f,sign*1.392f),Vector3.right,Vector3.up,10.5f,2.02f);art.Panel("BridgeSkirting2742","495F56",new Vector3(0,.08f,sign*1.385f),Vector3.right,Vector3.up,10.5f,.14f);art.Panel("BridgeGuideStripe2742","A4AE96",new Vector3(0,1.18f,sign*1.385f),Vector3.right,Vector3.up,10.5f,.035f);}
+  art.Bake(OfficeBridgeDressing2742,OfficeBridgeDressing2742.AddComponent<WorkshopArtResources>());
+  foreach(float sign in new[]{-1f,1f}){var g=new FutureAssetKit2717(this).Build(FutureProp2717.WaitingBench,new Vector3(sign*2,0,sign*1.05f),sign>0?0:180);FreightPlaceOnFloor2717(g);g.transform.SetParent(OfficeBridgeDressing2742.transform,true);}var extinguisher=new FutureAssetKit2717(this).Build(FutureProp2717.FireExtinguisher,new Vector3(0,0,1.15f),0);FreightPlaceOnFloor2717(extinguisher);extinguisher.transform.SetParent(OfficeBridgeDressing2742.transform,true);
+  FreightWallPanel2717("BridgeWindow2742","连廊",new Vector3(-1.5f,2.15f,1.39f),0,"Window");FreightWallPanel2717("BridgeWindow2742","连廊",new Vector3(1.5f,2.15f,-1.39f),180,"Window");var notice=new FutureAssetKit2717(this).Build(FutureProp2717.NoticeBoard,new Vector3(3.5f,1.45f,1.38f),0);notice.transform.SetParent(OfficeBridgeDressing2742.transform,true);
+  var owner=Root.gameObject.AddComponent<UnloadingFloor2725>();owner.Texture=new Texture2D(252,72,TextureFormat.RGBA32,true){name="BridgeTerrazzo2742",filterMode=FilterMode.Trilinear,anisoLevel=4};var pixels=new Color32[252*72];for(int j=0;j<72;j++)for(int i=0;i<252;i++){var c=PixelArt.Hex("929887")*(.97f+.06f*OfficeHash2736(i,j));if(i%24==0||j%24==0)c*=.8f;pixels[j*252+i]=c;}owner.Texture.SetPixels32(pixels);owner.Texture.Apply(true,false);owner.Material=new Material(GreyHarbor.FlashlightShaders2763.Load("HarborWorld")){color=Color.white,mainTexture=owner.Texture};owner.Material.SetFloat("_UseStableGround",1);floor.GetComponent<Renderer>().sharedMaterial=owner.Material;
+  var life=Root.gameObject.AddComponent<WorkshopArtResources>();var shader=GreyHarbor.FlashlightShaders2763.Load("FreightWall2718");foreach(var r in Root.GetComponentsInChildren<MeshRenderer>())if(r.name=="OfficeBridgeWhiteboxSide2741"||r.name=="OfficeBridgeEndFrame2741"||r.transform.parent==OfficeBridgeDressing2742.transform){if(r.name.StartsWith("FutureAsset"))continue;var mat=new Material(r.sharedMaterial){shader=shader};mat.SetVector("_FreightInnerRect2718",new Vector4(-5.1f,-1.25f,5.1f,1.25f));r.sharedMaterial=mat;life.Materials.Add(mat);}
+  Physics.SyncTransforms();
+ }
+}}

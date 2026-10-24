@@ -1,0 +1,38 @@
+using System;
+using System.Collections;
+using System.IO;
+using UnityEngine;
+namespace GreyHarbor {public sealed partial class RaidVerification {
+ void CloseWorldPhoto306(string name){
+  float zoom=G.View.orthographicSize;var prior=RenderTexture.active;var previousTarget=G.View.targetTexture;var target=new RenderTexture(480,480,24,RenderTextureFormat.ARGB32);target.Create();
+  try {G.View.orthographicSize=2.1f;G.View.targetTexture=target;G.View.Render();RenderTexture.active=target;var photo=new Texture2D(480,480,TextureFormat.RGB24,false);photo.ReadPixels(new Rect(0,0,480,480),0,0);photo.Apply();File.WriteAllBytes(Path.Combine(folder,name),photo.EncodeToPNG());Destroy(photo);}
+  finally {G.View.orthographicSize=zoom;G.View.targetTexture=previousTarget;RenderTexture.active=prior;target.Release();Destroy(target);}
+ }
+ LineRenderer[] PlayerTraces306(){var list=new System.Collections.Generic.List<LineRenderer>();foreach(var line in G.Map.Root.GetComponentsInChildren<LineRenderer>())if(line.name=="BulletTrace"||line.name=="SG12PelletTrace30")list.Add(line);return list.ToArray();}
+ IEnumerator RunWeaponPose306(){
+  Check(G.SavePath.EndsWith("verification-stash-3.0.14.json"),"isolated current verification save");StandardRaid();G.enabled=false;G.Paused=false;G.InventoryOpen=false;G.Controls=new TouchInput();foreach(var c in G.Map.Root.GetComponentsInChildren<Collider>())c.enabled=false;foreach(var e in G.Enemies){e.Dead=true;e.HitCollider.enabled=false;}
+  G.Player.transform.position=new Vector3(500,0,500);G.Player.Move(Vector3.zero);G.Rig.ResetView(45);G.Rig.Tick(0);Check(RaidActor.WeaponHoldHeight306<.95f*Mathf.Cos(50*Mathf.Deg2Rad)-.15f,"weapon visual hold point lowered by at least.15 units");Check(RaidGame.CombatHeight==.95f,"combat and mouse aim plane kept at.95");
+  var npc=RangeTarget278("PoseNpc306",1);npc.transform.position=G.Player.transform.position+G.Rig.Right*3;var guns=new[]{ItemKind.AK,ItemKind.MP5,ItemKind.SKS,ItemKind.AR16,ItemKind.Dagger,ItemKind.SG12};
+  foreach(var kind in guns){G.ClearShots();yield return null;G.Equipped=new ItemStack(kind,1);G.WeaponChanged279();npc.NpcWeapon=kind;
+   foreach(float yaw in new[]{45,135,225,315}){G.Rig.ResetView(yaw);G.Rig.Tick(0);foreach(var aim in new[]{G.Rig.Right,-G.Rig.Right,G.Rig.Forward,-G.Rig.Forward}){
+    G.Player.Aim=npc.Aim=aim;G.Player.Draw(G.View,1);npc.Draw(G.View,1);var flash=G.View.WorldToScreenPoint(G.Player.Muzzle.transform.position);var origin=G.View.WorldToScreenPoint(G.Player.MuzzleOnPlane(G.View));
+    Check(Mathf.Abs(G.Player.Gun.transform.localPosition.y-RaidActor.WeaponHoldHeight306)<.0001f&&Mathf.Abs(npc.Gun.transform.localPosition.y-RaidActor.WeaponHoldHeight306)<.0001f,"player and NPC chest hold across kind/yaw/direction "+kind+" "+yaw+" "+aim);
+    Check(Vector2.Distance(new Vector2(flash.x,flash.y),new Vector2(origin.x,origin.y))<.05f,"muzzle flash and projected bullet origin align "+kind+" "+yaw+" "+aim);
+   }}
+   G.ClearShots();G.Player.Aim=G.Rig.Right;G.Player.Draw(G.View,1);if(kind==ItemKind.SG12)G.FireShotgun30(G.Player.Aim);else G.SpawnShot(G.Player,G.Player.Aim);var trueMuzzle=G.Player.MuzzleOnPlane(G.View);var traces=PlayerTraces306();bool starts=traces.Length==(kind==ItemKind.SG12?8:1);foreach(var trace in traces)starts&=Vector3.Distance(trace.GetPosition(0),trueMuzzle)<.001f;Check(starts,"fired traces start at lowered live muzzle "+kind);G.ClearShots();
+  }
+  // Actual FirePlayer with both right and left buttons held; scope mode must not change to hip-fire arms.
+  foreach(var kind in guns){
+   G.ClearShots();G.Equipped=new ItemStack(kind,1);G.Equipped.Attachments30.Add(new ItemStack(ItemKind.BlueOptic30,1));G.WeaponChanged279();G.Player.transform.position=new Vector3(500,0,500);G.Rig.ResetView(45);G.Rig.Tick(0);G.Player.Aim=G.Rig.Right;
+   var p=G.View.WorldToScreenPoint(G.Player.transform.position+Vector3.up*RaidGame.CombatHeight+G.Player.Aim*5);var input=new TouchInput{AimPosition=new Vector2(p.x,p.y),Aiming30=true,Shooting=true};G.Controls=input;G.ResetScope30();G.TickScope30(.01f);Check(G.ReticleMode306==AimReticleMode306.ScopeCross,"scope spread reticle is immediate "+kind);G.TickScope30(.26f);Check(G.ReticleMode306==AimReticleMode306.ScopeCross, "held optic chooses shared spread reticle "+kind);G.MagazineAmmo=WeaponRules279.GreenAmmoFor(kind);G.Magazine=G.MagazineCapacity279;G.ReloadTime=G.HealTime=G.RepairTime=0;
+   for(int shot=0;shot<3;shot++){yield return new WaitForSeconds(.46f);G.UpdateAim();int before=G.Magazine;G.FirePlayer();G.TickScope30(.016f);G.Rig.Tick(0);G.UpdateAim();var frame=ScopePresentation305.Frame(Screen.width,Screen.height,G.AkCrosshairScreen276,true);Check(G.Magazine==before-1&&G.ReticleMode306==AimReticleMode306.ScopeCross,"live scoped firing never enables hip-fire line arms "+kind+" shot="+shot);Check(Vector2.Distance(frame.center,new Vector2(G.AkCrosshairScreen276.x,Screen.height-G.AkCrosshairScreen276.y))<.001f,"circle point follows recoil and camera shake "+kind+" shot="+shot);G.ClearShots();}
+   input.Aiming30=false;G.TickScope30(0);Check(G.ReticleMode306==AimReticleMode306.HipFire,"release restores normal spread reticle "+kind);input.Aiming30=true;G.TickScope30(1);G.Chest=new RaidInventory(10);G.Chest.Add(G.MagazineAmmo,100);G.BeginReload();G.TickScope30(.02f);Check(G.ReloadTime>0&&G.ReticleMode306==AimReticleMode306.None,"held aim during reload has no extra crosshair arms "+kind);G.ReloadTime=0;G.ResetScope30();
+  }
+  var ring=ScopePresentation305.RingMask306;var rp=ring.GetPixels32();bool ringOnly=true;int count=0;for(int y=0;y<ring.height;y++)for(int x=0;x<ring.width;x++)if(rp[y*ring.width+x].a>0){float dx=x+.5f-ring.width*.5f,dy=y+.5f-ring.height*.5f,r=Mathf.Sqrt(dx*dx+dy*dy);ringOnly&=r>125&&r<128;count++;}Check(ringOnly&&count>1000&&ring.GetPixel(128,128).a==0&&ring.GetPixel(0,0).a==0,"ring texture contains only circular rim, no bounding-box lines");var dot=ScopePresentation305.DotMask306;Check(dot.GetPixel(8,8).a>.9f&&dot.GetPixel(0,0).a==0,"dot uses a round alpha silhouette without cross arms");Check(ScopePresentation305.CornerMask.GetPixel(128,128).a==0,"circle interior still preserves original scene pixels");
+  // Lowering affects projection of the true muzzle, so check the existing live laser too.
+  G.Equipped=new ItemStack(ItemKind.AR16,1);G.Equipped.Attachments30.Add(new ItemStack(ItemKind.BlueLaser30,1));G.WeaponChanged279();G.Player.Draw(G.View,1);G.Vision.Refresh(G.Player.transform.position,G.Player.Aim);G.RenderScope30();var laser=G.transform.GetComponentInChildren<LineRenderer>();Check(laser&&laser.name=="WeaponLaser30"&&Vector3.Distance(laser.GetPosition(0),G.Player.MuzzleOnPlane(G.View))<.001f,"laser follows lowered live muzzle");
+  RangeDiscard278(npc);yield return null;G.ClearShots();G.ResetScope30();G.Controls=new TouchInput();G.Player.transform.position=G.Map.Spawn;G.Player.Move(Vector3.zero);G.Rig.ResetView(45);G.Rig.Tick(0);Shader.SetGlobalFloat("_HarborFogEnabled",0);
+  foreach(var kind in guns){G.Equipped=new ItemStack(kind,1);G.WeaponChanged279();G.Player.Aim=-G.Rig.Right;G.Player.Facing=-1;G.Player.Draw(G.View,1);CloseWorldPhoto306("3.0.6-"+kind+"-chest.png");var changed=G.Player.Gun.transform.localPosition;G.Player.Gun.transform.localPosition=changed+Vector3.up*(RaidGame.CombatHeight*Mathf.Cos(50*Mathf.Deg2Rad)-RaidActor.WeaponHoldHeight306);CloseWorldPhoto306("3.0.6-"+kind+"-previous-height.png");G.Player.Gun.transform.localPosition=changed;}
+  G.ResetScope30();G.Controls=new TouchInput();G.Finish(false);results.Add("INFO world-camera weapon-height photos exclude IMGUI; full visible-window scope confirmation remains manual");results.Add("WEAPON POSE AND AIM DOT 3.0.6 COMPLETE");
+ }
+}}
